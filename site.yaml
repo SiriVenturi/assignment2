@@ -4,28 +4,28 @@
   gather_facts: yes
   become: yes
   tasks:
-    - name: apt update
+    - name: Update package cache
       apt:
         update_cache: true
 
-- name: Configuring HAproxy loadbalancer
+- name: Configure HAProxy Load Balancer
   hosts: HAproxy
   become: yes
   tasks:
 
-    - name: Installing HAproxy
+    - name: Install HAProxy
       apt:
         name: haproxy
         state: present
         update_cache: true
       
 
-    - name: gather server ip addresses
+    - name: Gather server IP addresses
       setup:
-            filter: ansible_default_ipv4.address     
+        filter: ansible_default_ipv4.address     
          
     
-    - name: copy files haproxy.cfg
+    - name: Copy HAProxy configuration file
       template:
         src: haproxy.cfg.j2
         dest: "/etc/haproxy/haproxy.cfg"
@@ -34,7 +34,7 @@
 
   handlers:
 
-    - name: restart haproxy
+    - name: Restart HAProxy
       service:
        name: haproxy
        state: restarted
@@ -42,34 +42,33 @@
 - hosts: webservers
   become: yes
   tasks:
-    - name: install pip
+    - name: Install pip
       apt:
         name: python3-pip
         state: present
     
-    - name: install flask
+    - name: Install Flask
       pip:
         executable: pip3
         name: flask
         state: latest
-    - name: install gunicorn
+    - name: Install Gunicorn
       pip:
         executable: pip3
         name: gunicorn
         state: latest
 
-    - name: createnew directory
+    - name: Create new directory
       file:
               path: "/home/flask-app/"
               state: directory
-    - name: copy app.py to webservers
+    - name: Copy Flask application to webservers
       template:
         src: "application2.py"
         dest: "/home/flask-app/app.py"
 
 
-    - name: start flask app
+    - name: Start Flask application
       shell: |
         cd /home/flask-app/
-        gunicorn --bind 0.0.0.0:80 app:app&  
-
+        gunicorn --bind 0.0.0.0:80 app:app&
