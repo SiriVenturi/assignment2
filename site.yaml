@@ -8,7 +8,7 @@
       apt:
         update_cache: true
 
-- name: Configure HAProxy Load Balancer
+- name: Configure HAProxy Load-Balancer
   hosts: HAproxy
   become: yes
   tasks:
