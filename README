@@ -1,18 +1,42 @@
-#Simple flask services/applications for various assignments.
-# 
-# main.py: Online calculator, supports only 'add'.
-# application2.py: Replies with a string containing the Time and hostname.
-# assignment2.py: Replies with an HTML formatted string containing the Time and hostname.
+# Deploying Flask App Behind HAProxy
 
-#export FLASK_APP=<filename>
-#export FLASK_RUN_HOST=<localhost|0.0.0.0>
-#export FLASK_RUN_PORT=8210
+##Overview:
+This Ansible playbook sets up a Flask app and an HAProxy load balancer on a bunch of web servers. 
+The Flask app just serves a basic response, and HAProxy spreads out incoming
+traffic across different backend servers.
 
+## Prerequisites:
+-You'll need Ansible installed on your computer.
+-Make sure you have SSH access to the target hosts set up with SSH keys.
+-Keep the Flask app files in the same folder where you're working.
+-Have the HAProxy configuration template file (haproxy.cfg.j2) in the same folder too.
 
+## Setup:
+1. Confirm that the Flask application files(application2.py) are in the current working directory.
+2. Verify that the HAProxy configuration template file (haproxy.cfg.j2) is also available 
+in the current working directory.
 
-Usage Example:
-export FLASK_APP=main.py
-export FLASK_RUN_HOST=localhost
-export FLASK_RUN_PORT=8210
-flask run
+## Usage:
+## Instructions:
+1. Edit the `hosts` file by adding the IP addresses or hostnames of your web servers and HAProxy
+server.
+2. Execute the Ansible playbook with the command below:
 
+   " ansible-playbook -i hosts site.yaml "
+
+## Description:
+### Tasks
+- Refreshes package lists on all managed hosts.
+- Sets up HAProxy on a separate server to manage load balancing.
+- Collects IP addresses of web servers to configure HAProxy.
+- Utilizes a Jinja2 template to dynamically manage HAProxy configuration.
+- Installs necessary Python dependencies (pip, Flask, Gunicorn) on web servers for running the application.
+- Establishes a directory for the Flask application on web servers.
+- Deploys the Flask application code (application2.py) to web servers.
+- Executes the Flask application as a daemon using Gunicorn for optimal resource utilization.
+
+## Notes:
+
+- Tailor the HAProxy configuration template (`haproxy.cfg.j2`) to suit your specific needs.
+- Verify that SSH keys are correctly set up for passwordless authentication to the target hosts.
+- Conduct comprehensive testing of the deployment to confirm accessibility of the Flask application via the HAProxy load balancer.
