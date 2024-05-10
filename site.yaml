@@ -13,7 +13,7 @@
   become: yes
   tasks:
 
-    - name: Install HAProxy
+    - name: Install HAProxy_
       apt:
         name: haproxy
         state: present
